@@ -83,16 +83,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             {
                 continue
             }
-            
         }
-        
+        performSegue(withIdentifier: "viewAlbum", sender: self)
         //seguePin.coordinate = (view.annotation?.coordinate)!
-        GetPhotos.sharedInstance().dataController = dataController
+       /* GetPhotos.sharedInstance().dataController = dataController
         let nextController = storyboard?.instantiateViewController(withIdentifier: "AlbumController") as! PhotoAlbumViewController
         nextController.pin = seguePin
         nextController.lat = seguePin.latitude
         nextController.lon = seguePin.longitude
-        navigationController?.pushViewController(nextController, animated: true)
+        navigationController?.pushViewController(nextController, animated: true)*/
     }
     
     
