@@ -45,7 +45,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     //MARK: pin style
     func mapView(_ mapView: MKMapView, viewFor view: MKAnnotation) -> MKAnnotationView?
     {
-        
         let reuseId = "pin"
         
         var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
@@ -65,7 +64,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     }
     
     //MARK: Trying new tap event method
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)
+    {
         //segue to photo album view
        
         fetchPins()
@@ -73,7 +73,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         var tappedPoint = view.annotation?.coordinate as! CLLocationCoordinate2D
         
         //TODO: set segue Pin to be a pin
-        for pin in pins!{
+        for pin in pins!
+        {
             if (pin.latitude == tappedPoint.latitude) && (pin.longitude == tappedPoint.longitude)
             {
                self.seguePin = pin
@@ -85,13 +86,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             }
         }
         performSegue(withIdentifier: "viewAlbum", sender: self)
-        //seguePin.coordinate = (view.annotation?.coordinate)!
-       /* GetPhotos.sharedInstance().dataController = dataController
-        let nextController = storyboard?.instantiateViewController(withIdentifier: "AlbumController") as! PhotoAlbumViewController
-        nextController.pin = seguePin
-        nextController.lat = seguePin.latitude
-        nextController.lon = seguePin.longitude
-        navigationController?.pushViewController(nextController, animated: true)*/
     }
     
     
@@ -138,7 +132,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         mapView.addAnnotation(mapPin as! MKAnnotation)
       
-        do{
+        do
+        {
            try  dataController.viewContext.save()
         }
         catch
@@ -207,7 +202,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
 
     var fetchedResultsController: NSFetchedResultsController<Pin>!
     
-    /*fileprivate func setFetchedResultsController() {
+    /*fileprivate func setFetchedResultsController()
+     {
         
         let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
         
@@ -218,10 +214,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
-        do{
+        do
+        {
             try fetchedResultsController.performFetch()
         }
-        catch {
+        catch
+        {
             fatalError("The fetch could not be performed: \(error.localizedDescription)")
         }
     }

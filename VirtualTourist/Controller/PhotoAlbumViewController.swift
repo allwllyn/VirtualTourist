@@ -17,14 +17,13 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
 {
     @IBOutlet weak var photoCollection: UICollectionView!
     
-    
     @IBOutlet weak var collectionFlow: UICollectionViewFlowLayout!
     
     var dataController: DataController!
     
-    var pin: Pin?
+    var pin: Pin!
     
-     var fetchedResultsController: NSFetchedResultsController<Photo>!
+    var fetchedResultsController: NSFetchedResultsController<Photo>!
     
     var lat: Double?
     
@@ -36,14 +35,13 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     
     //var fetchedResultsController: NSFetchedResultsController<Photo>!
     
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         //setFetchedResultsController()
         
        // lat = pin?.coordinate.latitude
         //lon = pin?.coordinate.longitude
-        
-        
         
         let space: CGFloat = 3.0
         let widthDimension = (view.frame.size.width - (2*space)) / 3.0
@@ -53,7 +51,9 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         collectionFlow.minimumLineSpacing = space
         collectionFlow.itemSize = CGSize(width: widthDimension, height: heightDimension)
         
-       loadPhotos()
+        fetchPhotos()
+        
+      // loadPhotos()
     
     }
     
@@ -65,7 +65,8 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
-        do{
+        do
+        {
             try fetchedResultsController.performFetch()
         }
         catch {
@@ -90,7 +91,8 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
             cell.imageView.image = UIImage(data: photo)
             cell.activityIndicator.isHidden = true
         }
-        else{
+        else
+        {
             cell.backgroundColor = UIColor.lightGray
             cell.imageView.image = nil
             cell.activityIndicator.isHidden = false
@@ -102,14 +104,43 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         return cell
     }
     
+    func fetchPhotos()
+    {
+        
+        print("fetchPins fuction has been called")
+        
+        let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
+        
+        // MARK: sort by creationDate?
+        let predicate = NSPredicate(format: "pin == %@", pin)
+        fetchRequest.predicate = predicate
+        let sortDescriptor = NSSortDescriptor(key: "binary", ascending: true)
+        
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        if let result = try? dataController.viewContext.fetch(fetchRequest)
+        {
+            print("*********************************************************")
+            print(result.count)
+            print("*********************************************************")
+            print(result[0].binary)
+            for i in result
+            {
+                if photoAlbum.count < 9
+                {
+                photoAlbum.append(i.binary!)
+                }
+            }
+        }
+    }
     
     
     func loadPhotos()
     {
+        GetPhotos.sharedInstance().photoAlbum = []
+        
         GetPhotos.sharedInstance().searchByLatLon(lat!, lon!, dataController: dataController, pin: pin!)
         {
-            
-        
             self.photoAlbum = GetPhotos.sharedInstance().photoAlbum
             
             performUIUpdatesOnMain
@@ -119,4 +150,18 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         }
     }
     
+  @IBAction func newSet()
+    {
+        GetPhotos.sharedInstance().photoAlbum = []
+        
+        GetPhotos.sharedInstance().searchByLatLon(lat!, lon!, dataController: dataController, pin: pin!)
+        {
+            self.photoAlbum = GetPhotos.sharedInstance().photoAlbum
+            
+            performUIUpdatesOnMain
+            {
+                self.photoCollection.reloadData()
+            }
+        }
+    }
 }
