@@ -32,7 +32,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Rtm-C5-fti"/>
+                    <navigationItem key="navigationItem" id="Rtm-C5-fti">
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="ra7-HH-mbW">
+                            <connections>
+                                <action selector="edit:" destination="BYZ-38-t0r" id="Wqf-Vy-InZ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="mapView" destination="oaK-y8-uhv" id="3bK-yu-9VL"/>
                         <segue destination="Che-Ca-NxQ" kind="show" identifier="viewAlbum" id="dRB-Ft-TRf"/>
@@ -107,12 +113,8 @@
                             <outlet property="delegate" destination="Che-Ca-NxQ" id="jvM-Lv-bVG"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" id="Fhl-cu-B9H">
-                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="1U6-er-wJW">
-                            <connections>
-                                <action selector="newSet" destination="Che-Ca-NxQ" id="eMW-Hw-QOf"/>
-                            </connections>
-                        </barButtonItem>
+                    <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="Fhl-cu-B9H">
+                        <barButtonItem key="rightBarButtonItem" title="Item" id="1U6-er-wJW"/>
                     </navigationItem>
                     <connections>
                         <outlet property="collectionFlow" destination="dLb-NR-Jy2" id="42D-xH-DJz"/>

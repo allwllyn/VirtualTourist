@@ -20,9 +20,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     var seguePin: Pin!
     
+    var fetchedResultsController: NSFetchedResultsController<Pin>!
+    
+    var editMode: Bool = false
     
     @IBOutlet weak var mapView: MKMapView!
     
+  
     var dataController: DataController!
     
     override func viewDidLoad()
@@ -66,26 +70,54 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     //MARK: Trying new tap event method
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView)
     {
-        //segue to photo album view
-       
+        //MARK: fetch to make sure all latest pins are available
         fetchPins()
         
-        var tappedPoint = view.annotation?.coordinate as! CLLocationCoordinate2D
+        //segue to photo album view
+       var tappedPoint = view.annotation?.coordinate as! CLLocationCoordinate2D
         
-        //TODO: set segue Pin to be a pin
-        for pin in pins!
+        if editMode == false
         {
-            if (pin.latitude == tappedPoint.latitude) && (pin.longitude == tappedPoint.longitude)
+            //TODO: set segue Pin to be a pin
+            for pin in pins!
             {
-               self.seguePin = pin
-            }
-            else
+                if (pin.latitude == tappedPoint.latitude) && (pin.longitude == tappedPoint.longitude)
+                {
+                    self.seguePin = pin
+                    
+                }
+                else
             
-            {
-                continue
-            }
+                {
+                    continue
+                }
         }
         performSegue(withIdentifier: "viewAlbum", sender: self)
+        }
+        else
+        {
+            for pin in pins!
+            {
+                if (pin.latitude == tappedPoint.latitude) && (pin.longitude == tappedPoint.longitude)
+                {
+                    dataController.viewContext.delete(pin)
+                    do {
+                   try dataController.viewContext.save()
+                    }
+                    catch
+                    {
+                        print("error saving delete")
+                    }
+                    performUIUpdatesOnMain {
+                        mapView.reloadInputViews()
+                    }
+                }
+                else
+                {
+                    continue
+                }
+            }
+        }
     }
     
     
@@ -125,12 +157,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
        // newPin.coordinate = coordinate
         newPin.latitude = coordinate.latitude
         newPin.longitude = coordinate.longitude
+        GetPhotos.sharedInstance().searchByLatLon(newPin.latitude, newPin.longitude, dataController: dataController, pin: newPin){
+            print("Photos have loaded for the new pin.")
+        }
+        let mapPin = MKPointAnnotation()
         
-        let mapPin = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        let mapPinCoordinate = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
         
         // TODO: Start downloading photos here
         
-        mapView.addAnnotation(mapPin as! MKAnnotation)
+        mapPin.coordinate = mapPinCoordinate
+        
+        mapView.addAnnotation(mapPin)
       
         do
         {
@@ -141,6 +179,19 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             print("saving didn't work")
         }
     }
+    
+    @IBAction func edit(_ sender: Any) {
+        
+        if editMode == false{
+            editMode = true
+        }
+        else
+        {
+            editMode = false
+        }
+        
+    }
+    
     
     func loadPins(_ mapView: MKMapView)
     {
@@ -181,7 +232,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     func fetchPins()
     {
         
-        print("fetchPins fuction has been called")
+        print("fetchPins function has been called")
         
         let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
        
@@ -199,8 +250,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             pins = result
         }
     }
+    
+    func deletePin(_ pin: Pin)
+    {
+        dataController.viewContext.delete(pin)
+    }
 
-    var fetchedResultsController: NSFetchedResultsController<Pin>!
+ 
     
     /*fileprivate func setFetchedResultsController()
      {

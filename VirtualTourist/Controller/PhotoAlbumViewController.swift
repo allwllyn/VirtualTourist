@@ -19,6 +19,7 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     
     @IBOutlet weak var collectionFlow: UICollectionViewFlowLayout!
     
+    
     var dataController: DataController!
     
     var pin: Pin!
@@ -33,12 +34,19 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     
     var photoAlbum = [Data]()
     
+    let dateFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.dateStyle = .medium
+        return df
+    }()
+    
     //var fetchedResultsController: NSFetchedResultsController<Photo>!
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        //setFetchedResultsController()
+        
+        setupFetchedResultsController()
         
        // lat = pin?.coordinate.latitude
         //lon = pin?.coordinate.longitude
@@ -51,7 +59,7 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         collectionFlow.minimumLineSpacing = space
         collectionFlow.itemSize = CGSize(width: widthDimension, height: heightDimension)
         
-        fetchPhotos()
+        //fetchPhotos()
         
       // loadPhotos()
     
@@ -79,7 +87,7 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         return 9
     }
     
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+   /* override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
         
@@ -102,12 +110,22 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         //cell.image = photo
         
         return cell
+    }*/
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
+    {
+    let aPhoto = fetchedResultsController.object(at: indexPath).binary!
+        let cell = photoCollection.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
+        
+        cell.imageView.image = UIImage(data: aPhoto)
+    
+    return cell
     }
     
-    func fetchPhotos()
+    
+    /*func fetchPhotos()
     {
         
-        print("fetchPins fuction has been called")
+        print("fetchPhotos function has been called")
         
         let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
         
@@ -132,7 +150,7 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
                 }
             }
         }
-    }
+    }*/
     
     
     func loadPhotos()
@@ -150,6 +168,12 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         }
     }
     
+    func deletePhoto(at indexPath: IndexPath) {
+        let photoToDelete = fetchedResultsController.object(at: indexPath)
+        dataController.viewContext.delete(photoToDelete)
+        try? dataController.viewContext.save()
+    }
+    
   @IBAction func newSet()
     {
         GetPhotos.sharedInstance().photoAlbum = []
@@ -162,6 +186,23 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
             {
                 self.photoCollection.reloadData()
             }
+        }
+    }
+    
+    fileprivate func setupFetchedResultsController() {
+        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
+        let predicate = NSPredicate(format: "pin == %@", pin)
+        fetchRequest.predicate = predicate
+        let sortDescriptor = NSSortDescriptor(key: "creationDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: "\(pin)-photos")
+        fetchedResultsController.delegate = self
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("The fetch could not be performed: \(error.localizedDescription)")
         }
     }
 }
