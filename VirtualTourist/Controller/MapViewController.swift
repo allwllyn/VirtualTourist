@@ -203,6 +203,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                // }
             }
         }
+        else if (pins?.count)! == 0
+        {
+            if (mapView.annotations.count) != 0
+            {
+                    mapView.removeAnnotations(mapView.annotations)
+            }
+        }
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
