@@ -53,6 +53,13 @@ class GetPhotos: NSObject
                 (success) in
                 if success
                 {
+                    
+                    do
+                    {try dataController.viewContext.save()}
+                    catch{
+                        print("could not save")
+                    }
+                    
                     print("there are 9 photos now")
                     completion()
                 }

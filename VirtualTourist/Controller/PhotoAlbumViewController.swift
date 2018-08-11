@@ -176,6 +176,18 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     
   @IBAction func newSet()
     {
+        let photosToDelete = fetchedResultsController.fetchedObjects as! [Photo]
+        
+        for photo in photosToDelete
+        {
+            dataController.viewContext.delete(photo)
+            do
+            {try dataController.viewContext.save()
+            }
+            catch{
+                print("Could not delete")
+            }
+        }
         GetPhotos.sharedInstance().photoAlbum = []
         
         GetPhotos.sharedInstance().searchByLatLon(lat!, lon!, dataController: dataController, pin: pin!)
@@ -184,6 +196,7 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
             
             performUIUpdatesOnMain
             {
+                self.setupFetchedResultsController()
                 self.photoCollection.reloadData()
             }
         }

@@ -44,6 +44,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         loadPins(mapView)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super .viewWillAppear(true)
+        loadPins(mapView)
+    }
 
     
     //MARK: pin style
@@ -91,8 +96,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 {
                     continue
                 }
-        }
-        performSegue(withIdentifier: "viewAlbum", sender: self)
+            }
+            performSegue(withIdentifier: "viewAlbum", sender: self)
         }
         else
         {
@@ -100,7 +105,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             {
                 if (pin.latitude == tappedPoint.latitude) && (pin.longitude == tappedPoint.longitude)
                 {
-                    dataController.viewContext.delete(pin)
+                    let removalIndex = pins?.index(of: pin)
+                    pins?.remove(at: removalIndex!)
+                    deletePin(pin)
                     do {
                    try dataController.viewContext.save()
                     }
@@ -108,31 +115,12 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                     {
                         print("error saving delete")
                     }
-                    performUIUpdatesOnMain {
-                        mapView.reloadInputViews()
-                    }
                 }
                 else
                 {
                     continue
                 }
             }
-        }
-    }
-    
-    
-    
-    //MARK: What happens when pin is tapped from MapMe
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl)
-    {
-        if control == view.rightCalloutAccessoryView
-        {
-            return
-            //let app = UIApplication.shared
-            //if let toOpen = view.annotation?.subtitle!
-           // {
-        //    app.open(NSURL(string: toOpen)! as URL, options: [:], completionHandler: nil)
-            //}
         }
     }
     
@@ -160,6 +148,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         GetPhotos.sharedInstance().searchByLatLon(newPin.latitude, newPin.longitude, dataController: dataController, pin: newPin){
             print("Photos have loaded for the new pin.")
         }
+        
         let mapPin = MKPointAnnotation()
         
         let mapPinCoordinate = CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
@@ -195,9 +184,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
     
     func loadPins(_ mapView: MKMapView)
     {
+        
         if (pins?.count)! > 0
         {
-            
+            mapView.removeAnnotations(mapView.annotations)
             for pin in pins!
             {
               // let  mapPin = MKAnnotation(coordinate: CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
@@ -208,9 +198,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
                 
                 mapView.addAnnotation(mapPin)
                     
-                performUIUpdatesOnMain {
-                    mapView.reloadInputViews()
-                }
+               // performUIUpdatesOnMain {
+                  //  mapView.reloadInputViews()
+               // }
             }
         }
     }
@@ -234,6 +224,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
         
         print("fetchPins function has been called")
         
+        pins = []
+        
         let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
        
         // MARK: sort by location? we'll see how this works
@@ -246,14 +238,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsCo
             print("*********************************************************")
             print(result.count)
             print("*********************************************************")
-            print(result[0].latitude)
             pins = result
         }
     }
     
     func deletePin(_ pin: Pin)
     {
+        let mapPin = MKPointAnnotation()
+        mapPin.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
+        self.mapView.removeAnnotation(mapPin)
         dataController.viewContext.delete(pin)
+        fetchPins()
+        self.loadPins(self.mapView)
     }
 
  
