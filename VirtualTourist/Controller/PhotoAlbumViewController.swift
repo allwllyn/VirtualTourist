@@ -59,10 +59,23 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         collectionFlow.minimumLineSpacing = space
         collectionFlow.itemSize = CGSize(width: widthDimension, height: heightDimension)
         
+        reloadAfterTime()
+        
         //fetchPhotos()
         
       // loadPhotos()
     
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        photoCollection.reloadData()
+        
+    }
+    
+    func reloadAfterTime(delayTime: TimeInterval = 0.2){
+        photoCollection.reloadData()
     }
     
   /*  fileprivate func setFetchedResultsController() {
@@ -113,12 +126,24 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
     }*/
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
-    let aPhoto = fetchedResultsController.object(at: indexPath).binary!
-        let cell = photoCollection.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
-        
-        cell.imageView.image = UIImage(data: aPhoto)
     
-    return cell
+       let cell = photoCollection.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
+        
+        if (fetchedResultsController.fetchedObjects?.count)! == 9
+        {
+        let aPhoto = fetchedResultsController.object(at: indexPath).binary!
+            cell.activityIndicator.isHidden = true
+            cell.imageView.image = UIImage(data: aPhoto)
+        }
+        else
+        {
+            cell.backgroundColor = UIColor.lightGray
+            cell.imageView.image = nil
+            cell.activityIndicator.isHidden = false
+            cell.activityIndicator.startAnimating()
+        }
+        
+        return cell
     }
     
     

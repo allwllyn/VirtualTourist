@@ -53,7 +53,6 @@ class GetPhotos: NSObject
                 (success) in
                 if success
                 {
-                    
                     do
                     {try dataController.viewContext.save()}
                     catch{
