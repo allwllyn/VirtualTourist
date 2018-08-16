@@ -89,6 +89,14 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
             cell.activityIndicator.isHidden = true
             cell.imageView.image = UIImage(data: aPhoto)
             }
+            
+            else
+            {
+                cell.backgroundColor = UIColor.lightGray
+                cell.imageView.image = nil
+                cell.activityIndicator.isHidden = false
+                cell.activityIndicator.startAnimating()
+            }
         }
         else
         {
