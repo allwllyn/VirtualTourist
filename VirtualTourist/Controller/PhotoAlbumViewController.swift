@@ -40,16 +40,12 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         return df
     }()
     
-    //var fetchedResultsController: NSFetchedResultsController<Photo>!
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
         setupFetchedResultsController()
-        
-       // lat = pin?.coordinate.latitude
-        //lon = pin?.coordinate.longitude
         
         let space: CGFloat = 3.0
         let widthDimension = (view.frame.size.width - (2*space)) / 3.0
@@ -60,10 +56,6 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         collectionFlow.itemSize = CGSize(width: widthDimension, height: heightDimension)
         
         reloadAfterTime()
-        
-        //fetchPhotos()
-        
-      // loadPhotos()
     
     }
     
@@ -78,62 +70,25 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         photoCollection.reloadData()
     }
     
-  /*  fileprivate func setFetchedResultsController() {
-        let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
-        
-       // let sortDescriptor = NSSortDescriptor( key: "creationDate", ascending: false)
-        //fetchRequest.sortDescriptors = [sortDescriptor]
-        
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-        fetchedResultsController.delegate = self
-        do
-        {
-            try fetchedResultsController.performFetch()
-        }
-        catch {
-            fatalError("The fetch could not be performed: \(error.localizedDescription)")
-        }
-    }*/
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return 9
+        return fetchedResultsController.fetchedObjects?.count ?? 9
     }
     
-   /* override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
-    {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
-        
-        //let photo = photoAlbum[(indexPath as NSIndexPath).row]
-        
-        if photoAlbum.count == 9
-        {
-            let photo = photoAlbum[(indexPath as NSIndexPath).row]
-            cell.imageView.image = UIImage(data: photo)
-            cell.activityIndicator.isHidden = true
-        }
-        else
-        {
-            cell.backgroundColor = UIColor.lightGray
-            cell.imageView.image = nil
-            cell.activityIndicator.isHidden = false
-            cell.activityIndicator.startAnimating()
-        }
-        
-        //cell.image = photo
-        
-        return cell
-    }*/
+ 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
     
        let cell = photoCollection.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCell
         
-        if (fetchedResultsController.fetchedObjects?.count)! == 9
+        if (fetchedResultsController.fetchedObjects?.count)! != 0
         {
-        let aPhoto = fetchedResultsController.object(at: indexPath).binary!
+            if let aPhoto = fetchedResultsController.object(at: indexPath).binary
+            {
             cell.activityIndicator.isHidden = true
             cell.imageView.image = UIImage(data: aPhoto)
+            }
         }
         else
         {
@@ -146,36 +101,12 @@ class PhotoAlbumViewController: UICollectionViewController, NSFetchedResultsCont
         return cell
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        deletePhoto(at: indexPath)
+        photoCollection.reloadData()
+        self.loadView()
+    }
     
-    /*func fetchPhotos()
-    {
-        
-        print("fetchPhotos function has been called")
-        
-        let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
-        
-        // MARK: sort by creationDate?
-        let predicate = NSPredicate(format: "pin == %@", pin)
-        fetchRequest.predicate = predicate
-        let sortDescriptor = NSSortDescriptor(key: "binary", ascending: true)
-        
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        
-        if let result = try? dataController.viewContext.fetch(fetchRequest)
-        {
-            print("*********************************************************")
-            print(result.count)
-            print("*********************************************************")
-            print(result[0].binary)
-            for i in result
-            {
-                if photoAlbum.count < 9
-                {
-                photoAlbum.append(i.binary!)
-                }
-            }
-        }
-    }*/
     
     
     func loadPhotos()

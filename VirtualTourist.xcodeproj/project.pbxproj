@@ -22,7 +22,6 @@
 		43C611A420FD944800587E6C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C611A320FD944800587E6C /* Constants.swift */; };
 		43C611A720FEC35300587E6C /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C611A620FEC35300587E6C /* DataController.swift */; };
 		43C611A92103928100587E6C /* GetPhotos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C611A82103928100587E6C /* GetPhotos.swift */; };
-		43C611AB210396FB00587E6C /* MapInteract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C611AA210396FB00587E6C /* MapInteract.swift */; };
 		43C611B22103A0D600587E6C /* PhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C611B12103A0D600587E6C /* PhotoCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -65,7 +64,6 @@
 		43C611A320FD944800587E6C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		43C611A620FEC35300587E6C /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		43C611A82103928100587E6C /* GetPhotos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPhotos.swift; sourceTree = "<group>"; };
-		43C611AA210396FB00587E6C /* MapInteract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapInteract.swift; sourceTree = "<group>"; };
 		43C611B12103A0D600587E6C /* PhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -153,7 +151,6 @@
 				437D80FB210812C2007D4EBC /* PinClass.swift */,
 				43C611A120FD931000587E6C /* GCDBlackBox.swift */,
 				437D814C210E5016007D4EBC /* Location.swift */,
-				43C611AC210397D300587E6C /* Map */,
 				43C611A520FD945100587E6C /* Flickr */,
 			);
 			path = Model;
@@ -185,14 +182,6 @@
 				43C611A320FD944800587E6C /* Constants.swift */,
 			);
 			path = Flickr;
-			sourceTree = "<group>";
-		};
-		43C611AC210397D300587E6C /* Map */ = {
-			isa = PBXGroup;
-			children = (
-				43C611AA210396FB00587E6C /* MapInteract.swift */,
-			);
-			path = Map;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -333,7 +322,6 @@
 				43C611A020FD7E9400587E6C /* PhotoAlbumViewController.swift in Sources */,
 				437D814D210E5016007D4EBC /* Location.swift in Sources */,
 				437D80FC210812C2007D4EBC /* PinClass.swift in Sources */,
-				43C611AB210396FB00587E6C /* MapInteract.swift in Sources */,
 				43C611A220FD931000587E6C /* GCDBlackBox.swift in Sources */,
 				43C611A420FD944800587E6C /* Constants.swift in Sources */,
 				43C611B22103A0D600587E6C /* PhotoCell.swift in Sources */,
